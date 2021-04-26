@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
@@ -49,15 +49,24 @@ resource_fields = {
     'top_ten': fields.String
 }
 
-def abort_if_records_does_not_exist(review_id):
-    if review_id not in reviews:
-        abort(404, message="Could not find review...")
-
-def abort_if_records_exist(review_id):
-    if review_id not in reviews:
-        abort(409, message="Could not find review...")
-
 class Review(Resource):
+
+    @marshal_with(resource_fields)
+    def get(self):
+        query = request.args.get('query')
+        country = request.args.get('country')
+
+        if not query:
+            abort(400, message="Missing Parameter(s)")
+
+        search = '%{}%'.format(query)
+        query_set = ReviewModel.query.filter(ReviewModel.variety.ilike(search))
+
+        if country:
+            query_set = query_set.filter_by(country=country)
+
+        return query_set.all()
+
     @marshal_with(resource_fields)
     def post(self):
         args = review_post_args.parse_args()
@@ -110,15 +119,8 @@ class ManageReview(Resource):
         db.session.commit()
         return '', 204
 
-class ReviewFilterByCountry(Resource):
-    def get(self, country):
-        result = ReviewModel.query.filter_by(country=country).all()
-        return { 'result': [result] }
-
 api.add_resource(Review, "/reviews")
 api.add_resource(ManageReview, "/reviews/<int:review_id>")
-api.add_resource(ReviewFilterByCountry, "/reviews/<string:country>")
-# api.add_resource(SearchReviewBy, "/reviews/<string:country>")
 
 if __name__ == "__main__":
     app.run(debug=True)

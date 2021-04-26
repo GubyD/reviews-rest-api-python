@@ -12,19 +12,29 @@ newdata = {
 }
 
 updatedata = {
-    'variety': '12345',
+    'variety': 'lOw',
     'style': 'aaaaaaa',
+    'country': 'malaysia',
     'stars': 4.0
 }
 
-response = requests.put(BASE + "reviews/4", updatedata)
+response = requests.put(BASE + "reviews/5", updatedata)
 print(response.json())
 
 
 response = requests.post(BASE + "reviews", newdata)
 print(response.json())
 
-response = requests.get(BASE + "reviews/japan")
+response = requests.get(BASE + "reviews?query=Assss&country=uk")
+print(response.json())
+
+response = requests.get(BASE + "reviews?query=low&country=japan")
+print(response.json())
+
+response = requests.get(BASE + "reviews?query=Ha&country=uk")
+print(response.json())
+
+response = requests.get(BASE + "reviews?query=low")
 print(response.json())
 
 # response = requests.post(BASE + "helloworld")
