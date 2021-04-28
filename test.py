@@ -34,7 +34,7 @@ print(response.json())
 response = requests.get(BASE + "reviews?query=Ha&country=uk")
 print(response.json())
 
-response = requests.get(BASE + "reviews?query=low")
+response = requests.get(BASE + "reviews")
 print(response.json())
 
 # response = requests.post(BASE + "helloworld")

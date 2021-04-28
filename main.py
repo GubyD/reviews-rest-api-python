@@ -15,7 +15,7 @@ class ReviewModel(db.Model):
     variety = db.Column(db.Text, nullable=False)
     style = db.Column(db.Text, nullable=False)
     country = db.Column(db.Text, nullable=False)
-    stars = db.Column(db.Float, nullable=False)
+    stars = db.Column(db.Text, nullable=False)
     top_ten = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
@@ -28,7 +28,7 @@ review_post_args.add_argument("brand", type=str, help="Required Field(s) is Miss
 review_post_args.add_argument("variety", type=str, help="Required Field(s) is Missing", required=True)
 review_post_args.add_argument("style", type=str, help="Required Field(s) is Missing", required=True)
 review_post_args.add_argument("country", type=str, help="Required Field(s) is Missing", required=True)
-review_post_args.add_argument("stars", type=float, help="Required Field(s) is Missing", required=True)
+review_post_args.add_argument("stars", type=str, help="Required Field(s) is Missing", required=True)
 review_post_args.add_argument("top_ten", type=str)
 
 review_put_args = reqparse.RequestParser()
@@ -36,7 +36,7 @@ review_put_args.add_argument("brand", type=str)
 review_put_args.add_argument("variety", type=str)
 review_put_args.add_argument("style", type=str)
 review_put_args.add_argument("country", type=str)
-review_put_args.add_argument("stars", type=float)
+review_put_args.add_argument("stars", type=str)
 review_put_args.add_argument("top_ten", type=str)
 
 resource_fields = {
@@ -45,7 +45,7 @@ resource_fields = {
     'variety': fields.String,
     'style': fields.String,
     'country': fields.String,
-    'stars': fields.Float,
+    'stars': fields.String,
     'top_ten': fields.String
 }
 
@@ -56,14 +56,14 @@ class Review(Resource):
         query = request.args.get('query')
         country = request.args.get('country')
 
-        if not query:
-            abort(400, message="Missing Parameter(s)")
-
-        search = '%{}%'.format(query)
-        query_set = ReviewModel.query.filter(ReviewModel.variety.ilike(search))
+        query_set = ReviewModel.query
 
         if country:
             query_set = query_set.filter_by(country=country)
+
+        if query:
+            search = '%{}%'.format(query)
+            query_set = query_set.filter(ReviewModel.variety.ilike(search))
 
         return query_set.all()
 
