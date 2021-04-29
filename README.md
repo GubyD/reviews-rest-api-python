@@ -167,7 +167,7 @@ The REST API for the ramen rating app is described below.
 
     curl -i -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"brand":"GGE","variety":"Noodle Snack Wheat Cracks Seaweed Flavor","style":"Pack","country":"Taiwan","stars":"3.5","top_ten":""}' -X POST http://localhost:5000/reviews
 
-    Request-Body:
+#### Request-Body
     {
         "brand": "GGE",
         "variety": "Noodle Snack Wheat Cracks Seaweed Flavor",
@@ -196,12 +196,18 @@ The REST API for the ramen rating app is described below.
     }
 
 ## Edit Review
+This API allows to update a proportion of the review's details
 
 ### Request
 
 `PUT /reviews/{id}`
 
     curl -i -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"brand":"Anything"}' -X PUT http://localhost:5000/reviews/2581
+
+#### Request-Body
+    {
+        "brand": "GGE"
+    }
 
 ### Response
 
